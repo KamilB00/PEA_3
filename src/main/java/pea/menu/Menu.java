@@ -3,7 +3,6 @@ package pea.menu;
 import pea.algorithms.NearestNeighborImpl;
 import pea.algorithms.genetic.GeneticAlgorithmImpl;
 import pea.graph.Graph;
-
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -21,7 +20,6 @@ public class Menu {
     }
 
     public void mainWindow() throws IOException {
-
         switch (choice()) {
             case 1: {
                 System.out.print("Enter file name: ");
@@ -63,13 +61,10 @@ public class Menu {
                 break;
             }
             case 6: {
-                GeneticAlgorithmImpl ga = new GeneticAlgorithmImpl(1000, 0.01, 0.8);
+                GeneticAlgorithmImpl ga = new GeneticAlgorithmImpl(populationSize, mutationRate, crossoverRate);
                 ga.run();
                 mainWindow();
                 break;
-            }
-            case 7: {
-                System.out.println("SHOW GRAPH");
             }
             case 0: {
                 System.exit(0);
@@ -81,9 +76,7 @@ public class Menu {
     public int choiceMessage(String content, int choiceLimit) {
         int choice;
         System.out.println(content);
-
         Scanner scanner = new Scanner(System.in);
-
         do {
             choice = scanner.nextInt();
         } while (choice < 0 || choice > choiceLimit);
@@ -99,14 +92,13 @@ public class Menu {
                 "3. Set population size\n" +
                 "4. Set mutation rate \n" +
                 "5. Set crossover rate \n" +
-                "6. Run Genetic Algorithm \n" +
-                "7. Show graph \n" +
+                "6. Run Genetic Algorithm \n"+
                 "0. Exit";
         return menu;
     }
 
     private int choice() {
-        return choiceMessage(toString(), 7);
+        return choiceMessage(toString(), 6);
     }
 }
 

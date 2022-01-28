@@ -2,7 +2,6 @@ package pea.algorithms.genetic;
 
 import pea.algorithms.NearestNeighborImpl;
 import pea.graph.Graph;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,7 +16,6 @@ public class GeneticAlgorithmImpl {
     private final int[][] graph = Graph.getInstance().getGraph();
     private List<Chromosome> population = generatePopulation(NearestNeighborImpl.getPath(), populationSize);
 
-
     public GeneticAlgorithmImpl(int populationSize, double mutationRate, double crossoverRate) {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
@@ -27,14 +25,17 @@ public class GeneticAlgorithmImpl {
     public void run() {
         long finish = System.currentTimeMillis() + timeInSeconds * 1000L;
         population = generatePopulation(NearestNeighborImpl.getPath(), populationSize);
-        rankingSelection();
+        int min = population.get(0).getFitnessFunctionValue();
+
         do {
             crossover();
             mutatePopulation();
             rankingSelection();
-            System.out.println(population.get(0).getFitnessFunctionValue());
+            if(population.get(0).getFitnessFunctionValue() < min){
+                min = population.get(0).getFitnessFunctionValue();
+                System.out.println(min);
+            }
         } while (finish - System.currentTimeMillis() > 0);
-
     }
 
     List<Chromosome> generatePopulation(List<Integer> initialPath, Integer populationSize) {
@@ -61,7 +62,8 @@ public class GeneticAlgorithmImpl {
         while (number > 0) {
             int index = getRandomIntegerInRange(0, population.size()-1);
             Chromosome ch = population.get(index);
-            List<Integer> newPath = swapPath(ch.getPath());
+            //List<Integer> newPath = swapPath(ch.getPath());
+            List<Integer> newPath = insertPath(ch.getPath());
             ch.setPath(newPath);
             ch.setFitnessFunctionValue(getFitnessFunctionValue(newPath));
             number--;
@@ -124,7 +126,6 @@ public class GeneticAlgorithmImpl {
                 child2.add(parent2Path.get(i));
             }
         }
-
         if (a < b) {
             child2.addAll(a, matchingSection1);
             child1.addAll(a, matchingSection2);
@@ -167,7 +168,20 @@ public class GeneticAlgorithmImpl {
         int val = path.get(a);
         path.set(a, path.get(b));
         path.set(b, val);
+        return path;
+    }
 
+    private List<Integer> insertPath(List<Integer> path){
+        int a;
+        int b;
+        do {
+            a = getRandomIntegerInRange(1, path.size() - 2);
+            b = getRandomIntegerInRange(1, path.size() - 2);
+        } while (a >= b);
+
+        int val = path.get(a);
+        path.add(b,val);
+        path.remove(a);
         return path;
     }
 
